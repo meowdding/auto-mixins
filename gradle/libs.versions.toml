@@ -1,0 +1,25 @@
+[versions]
+
+gson = "2.12.1"
+guava = "33.5.0-jre"
+
+# Keep kt version in sync with first segment of ksp version
+kotlin = "2.1.20"
+ksp = "2.1.20-2.0.0"
+
+[libraries]
+
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+guava = { module = "com.google.guava:guava", version.ref = "guava" }
+
+ksp = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
+ksp-gradle = { module = "com.google.devtools.ksp:symbol-processing-gradle-plugin", version.ref = "ksp" }
+kotlin-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+
+kotlin_std = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8" }
+
+[plugins]
+
+kotlin-versioned = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin = { id = "org.jetbrains.kotlin.jvm" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
