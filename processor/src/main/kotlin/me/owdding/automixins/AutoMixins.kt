@@ -22,7 +22,7 @@ internal class Processor(
 
         val mixinPackage = context.mixinPackage + "."
         val mixinClasses = resolver.getSymbolsWithAnnotation("org.spongepowered.asm.mixin.Mixin")
-        val names = mixinClasses.filterIsInstance<KSClassDeclaration>().map { it to it.qualifiedName!!.toString() }
+        val names = mixinClasses.filterIsInstance<KSClassDeclaration>().map { it to it.qualifiedName!!.asString() }
             .filter { (_, name) -> name.startsWith(mixinPackage) }
             .map { (key, name) -> key to name.removePrefix(mixinPackage) }.toList()
         val keys = names.map { (key) -> key }
