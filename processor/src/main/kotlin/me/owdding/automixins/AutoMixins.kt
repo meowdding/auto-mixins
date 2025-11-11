@@ -1,4 +1,4 @@
-package me.owdding.ktmodules
+package me.owdding.automixins
 
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.processing.*
@@ -6,7 +6,6 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import sun.datatransfer.DataFlavorUtil.canonicalName
 
 internal class Processor(
     private val codeGenerator: CodeGenerator,
@@ -82,7 +81,7 @@ internal data class AutoMixinContext(
     val sourceSet: String,
     val plugin: String?,
 ) {
-    companion object Companion {
+    companion object {
         fun create(
             options: Map<String, String>,
             logger: KSPLogger,
