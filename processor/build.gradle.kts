@@ -3,7 +3,7 @@ plugins {
     `maven-publish`
 }
 
-group = "me.owdding"
+group = "me.owdding.auto-mixins"
 version = rootProject.version
 
 repositories {
@@ -23,13 +23,13 @@ tasks.test {
 }
 publishing {
     publications {
-        fun createDefault(name: String, task: Jar, suffix: String = "") = create<MavenPublication>(name) {
-            artifactId = "AutoMixins"
-            artifact(task)
-            version = project.version.toString() + suffix
+        create<MavenPublication>("maven") {
+            artifactId = "processor"
+            from(components["java"])
+            version = project.version.toString()
 
             pom {
-                this.name.set("AutoMixins")
+                this.name.set("processor")
                 url.set("https://github.com/meowdding/auto-mixins")
 
                 scm {
@@ -39,7 +39,6 @@ publishing {
                 }
             }
         }
-        createDefault("maven", tasks.jar.get())
     }
     repositories {
         maven {

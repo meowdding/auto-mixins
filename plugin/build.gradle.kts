@@ -10,7 +10,7 @@ plugins {
 }
 
 val properties = Properties().apply { load(projectDir.toPath().resolve("../gradle.properties").inputStream()) }
-group = "me.owdding"
+group = "me.owdding.auto-mixins"
 version = properties["version"].toString()
 
 repositories {
