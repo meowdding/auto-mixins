@@ -18,7 +18,7 @@ class AutoMixinsPlugin : Plugin<Project> {
 
         target.afterEvaluate {
             if (!target.extraProperties.has("auto-mixins-skip-dependency-registration"))
-                target.dependencies.add("ksp", "me.owdding:auto-mixins:$PLUGIN_VERSION")
+                target.dependencies.add("ksp", "me.owdding.auto-mixins:processor:$PLUGIN_VERSION")
             target.tasks.withType(KspAATask::class.java).configureEach {
                 it.kspConfig.processorOptions.put("meowdding.mixins.project_name", extension.projectName.get())
                 it.kspConfig.processorOptions.put("meowdding.mixins.mixin_package", extension.mixinPackage.get())
