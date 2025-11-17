@@ -29,10 +29,9 @@ internal class Processor(
         val values = names.map { (_, values) -> values }
 
         val middleSection = if (context.sourceSet.isEmpty()) "" else ("." + context.sourceSet)
-        val fileOutputStream = codeGenerator.createNewFile(
+        val fileOutputStream = codeGenerator.createNewFileByPath(
             Dependencies(false, *keys.mapNotNull { it.containingFile }.toTypedArray()),
-            "",
-            "${context.projectName}$middleSection.mixins",
+            "${context.projectName}$middleSection.mixins".lowercase(),
             "json"
         )
 

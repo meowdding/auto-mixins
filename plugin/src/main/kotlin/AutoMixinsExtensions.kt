@@ -12,4 +12,5 @@ abstract class AutoMixinExtension {
    @get:Input abstract val minVersion: Property<String>
    @get:Input abstract val compatibilityLevel: Property<String>
    @get:Input abstract val nameMapping: MapProperty<String, String>
+   @get:Input abstract val refmapName: Property<String>
 }
