@@ -3,6 +3,7 @@ package me.owdding
 import com.google.devtools.ksp.gradle.KspAATask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.tasks.SourceSetContainer
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 
 class AutoMixinsPlugin : Plugin<Project> {
@@ -42,6 +43,18 @@ class AutoMixinsPlugin : Plugin<Project> {
                     "meowdding.mixins.sourceset",
                     extension.nameMapping.getting(name).orElse(name)
                 )
+                it.kspConfig.processorOptions.put(
+                    "meowdding.mixins.output_directory",
+                    target.layout.buildDirectory.file(
+                        "generated/meowdding/auto_mixins/${it.kspConfig.cachesDir.get().asFile.name}"
+                    ).get().asFile.absolutePath
+                )
+            }
+            val sourceSets = target.extensions.getByType(SourceSetContainer::class.java)
+            sourceSets.forEach {
+                it.resources { resources ->
+                    resources.srcDirs(target.layout.buildDirectory.file("generated/meowdding/auto_mixins/${it.name}"))
+                }
             }
         }
     }

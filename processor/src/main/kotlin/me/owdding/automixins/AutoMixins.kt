@@ -6,12 +6,12 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import java.nio.file.StandardOpenOption
+import kotlin.io.path.Path
+import kotlin.io.path.createDirectories
+import kotlin.io.path.outputStream
 
-internal class Processor(
-    private val codeGenerator: CodeGenerator,
-    private val logger: KSPLogger,
-    private val context: AutoMixinContext,
-) : SymbolProcessor {
+internal class Processor(private val context: AutoMixinContext, ) : SymbolProcessor {
 
     private var ran = false
 
@@ -29,11 +29,10 @@ internal class Processor(
         val values = names.map { (_, values) -> values }
 
         val middleSection = if (context.sourceSet.isEmpty()) "" else ("." + context.sourceSet)
-        val fileOutputStream = codeGenerator.createNewFileByPath(
-            Dependencies(false, *keys.mapNotNull { it.containingFile }.toTypedArray()),
-            "${context.projectName}$middleSection.mixins".lowercase(),
-            "json"
-        )
+        val directory = Path(context.outputPath)
+        directory.createDirectories()
+        val fileOutputStream = directory.resolve("${context.projectName}$middleSection.mixins.json".lowercase())
+            .outputStream(StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
 
         val data = JsonObject()
         data.addProperty("required", context.required)
@@ -63,11 +62,7 @@ internal class AutoMixinProvider : SymbolProcessorProvider {
     override fun create(
         environment: SymbolProcessorEnvironment,
     ): SymbolProcessor {
-        return Processor(
-            environment.codeGenerator,
-            environment.logger,
-            AutoMixinContext.create(environment.options, environment.logger)
-        )
+        return Processor(AutoMixinContext.create(environment.options, environment.logger))
     }
 }
 
@@ -79,6 +74,7 @@ internal data class AutoMixinContext(
     val compatibilityVersion: String,
     val sourceSet: String,
     val plugin: String?,
+    val outputPath: String
 ) {
     companion object {
         fun create(
@@ -95,6 +91,7 @@ internal data class AutoMixinContext(
                 this.require("compatibility_level", options, logger),
                 this.require("sourceset", options, logger),
                 options["meowdding.mixins.plugin"],
+                this.require("output_directory", options, logger)
             )
         }
 
@@ -104,7 +101,8 @@ internal data class AutoMixinContext(
 
         private fun <T> requireNotNull(value: T?, logger: KSPLogger): T {
             if (value == null) {
-                throw IllegalStateException("Module processor wasn't configured correctly, please ensure you use the gradle plugin!")
+                logger.error("Module processor wasn't configured correctly, please ensure you use the gradle plugin!")
+                throw IllegalStateException()
             }
             return value
         }
