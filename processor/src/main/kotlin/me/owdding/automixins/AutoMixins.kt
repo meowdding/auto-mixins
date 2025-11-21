@@ -11,7 +11,7 @@ import kotlin.io.path.Path
 import kotlin.io.path.createDirectories
 import kotlin.io.path.outputStream
 
-internal class Processor(private val context: AutoMixinContext, ) : SymbolProcessor {
+internal class Processor(private val context: AutoMixinContext) : SymbolProcessor {
 
     private var ran = false
 
@@ -22,8 +22,11 @@ internal class Processor(private val context: AutoMixinContext, ) : SymbolProces
 
         val mixinPackage = context.mixinPackage + "."
         val mixinClasses = resolver.getSymbolsWithAnnotation("org.spongepowered.asm.mixin.Mixin")
-        val names = mixinClasses.filterIsInstance<KSClassDeclaration>().map { it to it.qualifiedName!!.asString() }
-            .filter { (_, name) -> name.startsWith(mixinPackage) }
+        val names = mixinClasses.filterIsInstance<KSClassDeclaration>().map {
+            it to it.qualifiedName!!.asString().let { name ->
+                it.packageName.asString() + "." + name.removePrefix(it.packageName.asString() + ".").replace(".", "$")
+            }
+        }.filter { (_, name) -> name.startsWith(mixinPackage) }
             .map { (key, name) -> key to name.removePrefix(mixinPackage) }.toList()
         val keys = names.map { (key) -> key }
         val values = names.map { (_, values) -> values }
@@ -74,7 +77,7 @@ internal data class AutoMixinContext(
     val compatibilityVersion: String,
     val sourceSet: String,
     val plugin: String?,
-    val outputPath: String
+    val outputPath: String,
 ) {
     companion object {
         fun create(
